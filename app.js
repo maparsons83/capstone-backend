@@ -51,11 +51,17 @@ app.get('/', (req, res) => {
 })
 
 app.get('/messages', (req, res) => {
-    fetch(`mongodb://${dbuser}:${dbpassword}@ds121321.mlab.com:21321/kenzie-capstone`)
-        .then(res => res.json())
-        .then(data => {
-            res.send(data)
-        })
+    Projects.find({}, function (err, projects) {
+        res.send(projects)
+        
+            
+        // console.log(projects[5].projects[0].channel.messages)
+        // res.send(projects[5].projects[0].channel.messages)
+    })
+})
+
+app.get('/projects', (req, res) => {
+
 })
 
 app.listen(PORT, () => console.log(`Listening on ${ PORT }`))
