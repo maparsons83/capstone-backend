@@ -47,14 +47,14 @@ const Projects = mongoose.model('Projects', projectSchema)
 const app = express();
 
 app.get('/', (req, res) => {
-    res.send("It Works");
+    res.send("It Works2");
 })
 
 app.get('/messages', (req, res) => {
     fetch(`mongodb://${dbuser}:${dbpassword}@ds121321.mlab.com:21321/kenzie-capstone`)
         .then(res => res.json())
         .then(data => {
-            console.log(data)
+            res.send(data)
         })
 })
 
