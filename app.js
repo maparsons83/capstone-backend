@@ -1,6 +1,7 @@
 const express = require('express');
 const PORT = process.env.PORT || 3000;
 const mongoose = require('mongoose')
+const CORS = require('cors')
 const db = mongoose.connection
 const Schema = mongoose.Schema
 
@@ -30,7 +31,7 @@ const projectSchema = new Schema ({
             channel: {
                 messages: [
                     {
-                        user: String,
+                        username: String,
                         timestamp: Number,
                         message: String
                     }
@@ -60,7 +61,7 @@ app.get('/messages', (req, res) => {
 
 app.get('/projects', (req, res) => {
     Projects.find({}, function (err, projects) {
-        res.send(projects)
+        res.send(projects[0])
     })
 })
 
