@@ -4,11 +4,21 @@ const mongoose = require('mongoose')
 const cors = require('cors')
 const db = mongoose.connection
 const Schema = mongoose.Schema
+const bodyParser = require('body-parser');
 
 const dbuser = 'maparsons83'
 const dbpassword = 'Capstone21!'
 
+const app = express();
 
+
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
+
+app.use(bodyParser.json());
+
+app.use(cors());
 
 mongoose.connect(`mongodb://${dbuser}:${dbpassword}@ds121321.mlab.com:21321/kenzie-capstone`)
 
@@ -45,9 +55,6 @@ const projectSchema = new Schema ({
 
 const Projects = mongoose.model('Projects', projectSchema)
 
-const app = express();
-
-app.use(cors());
 
 app.get('/', (req, res) => {
     res.send("It Works2");
@@ -70,12 +77,12 @@ app.get('/projects', (req, res) => {
 })
 
 app.post('/projects', (req, res) => {
-    const createProject = new Projects(req.body)
-    createProject.save((err, newProject) => {
-        if(err) return next(err);
-        res.status(201);
-        res.json(newProject)
+    const project = req.body
+    Projects.findOneAndUpdate({username: 'Matty'}, {$push: {projects: project}}, function (err, newProject) {
+        console.log(err)
     })
+    res.status(201)
+    res.send(req.body)
 })
 
 app.listen(PORT, () => console.log(`Listening on ${ PORT }`))
