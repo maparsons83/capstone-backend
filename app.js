@@ -30,27 +30,27 @@ const projectSchema = new Schema ({
             projectName: String,
             summary: String,
             targetAudience: String,
-            dates: Date,
+            dates: String,
             estimateLink: String,
             location: String,
             leads: String,
-            tasks: [
-                {
-                    taskName: String,
-                    completed: Boolean
-                }
-            ],
+            tasks: [],
             channel: {
-                messages: [
-                    {
-                        username: String,
-                        timestamp: Number,
-                        message: String
-                    }
-                ]
+                messages: []
             }
         }
     ]
+})
+
+const messageSchema = new Schema ({
+    username: String,
+    timestamp: Number,
+    message: String
+})
+
+const taskSchema = new Schema ({
+    taskName: String,
+    completed: Boolean
 })
 
 const Projects = mongoose.model('Projects', projectSchema)
@@ -60,15 +60,15 @@ app.get('/', (req, res) => {
     res.send("It Works2");
 })
 
-app.get('/messages', (req, res) => {
-    Projects.find({}, 'projects.channel.messages.user projects.channel.messages.message', function (err, projects) {
-        res.send(projects)
+// app.get('/messages', (req, res) => {
+//     Projects.find({}, 'projects.channel.messages.user projects.channel.messages.message', function (err, projects) {
+//         res.send(projects)
         
             
-        // console.log(projects[5].projects[0].channel.messages)
-        // res.send(projects[5].projects[0].channel.messages)
-    })
-})
+//         // console.log(projects[5].projects[0].channel.messages)
+//         // res.send(projects[5].projects[0].channel.messages)
+//     })
+// })
 
 app.get('/projects', (req, res) => {
     Projects.find({}, function (err, projects) {
