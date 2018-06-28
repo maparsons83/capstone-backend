@@ -3,14 +3,11 @@ const PORT = process.env.PORT || 3000;
 const mongoose = require('mongoose')
 const path = require('path')
 const CORS = require('cors')
-const mlabURI = 'mongodb://ds121321.mlab.com:21321/kenzie-capstone'
 const db = mongoose.connection
 const Schema = mongoose.Schema
 
 const dbuser = 'maparsons83'
 const dbpassword = 'Capstone21!'
-const dbname = 'kenzie-capstone'
-const dburi = 'ds121321.mlab.com:21321/'
 
 mongoose.connect(`mongodb://${dbuser}:${dbpassword}@ds121321.mlab.com:21321/kenzie-capstone`)
 
@@ -47,15 +44,24 @@ const projectSchema = new Schema ({
 
 const Projects = mongoose.model('Projects', projectSchema)
 
-Projects.create({ username: 'Matt' }, function (err, Matt) {
-    if (err) return err;
-    console.log('CREATED')
-})
-
 const app = express();
 
 app.get('/', (req, res) => {
-    res.send("It Works");
+    res.send("It Works2");
+})
+
+app.get('/messages', (req, res) => {
+    Projects.find({}, function (err, projects) {
+        res.send(projects)
+        
+            
+        // console.log(projects[5].projects[0].channel.messages)
+        // res.send(projects[5].projects[0].channel.messages)
+    })
+})
+
+app.get('/projects', (req, res) => {
+
 })
 
 app.listen(PORT, () => console.log(`Listening on ${ PORT }`))
