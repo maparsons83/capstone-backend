@@ -1,12 +1,14 @@
 const express = require('express');
 const PORT = process.env.PORT || 3000;
 const mongoose = require('mongoose')
-const CORS = require('cors')
+const cors = require('cors')
 const db = mongoose.connection
 const Schema = mongoose.Schema
 
 const dbuser = 'maparsons83'
 const dbpassword = 'Capstone21!'
+
+app.use(cors());
 
 mongoose.connect(`mongodb://${dbuser}:${dbpassword}@ds121321.mlab.com:21321/kenzie-capstone`)
 
