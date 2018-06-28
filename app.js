@@ -8,7 +8,7 @@ const Schema = mongoose.Schema
 const dbuser = 'maparsons83'
 const dbpassword = 'Capstone21!'
 
-app.use(cors());
+
 
 mongoose.connect(`mongodb://${dbuser}:${dbpassword}@ds121321.mlab.com:21321/kenzie-capstone`)
 
@@ -46,6 +46,8 @@ const projectSchema = new Schema ({
 const Projects = mongoose.model('Projects', projectSchema)
 
 const app = express();
+
+app.use(cors());
 
 app.get('/', (req, res) => {
     res.send("It Works2");
