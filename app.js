@@ -1,8 +1,6 @@
 const express = require('express');
 const PORT = process.env.PORT || 3000;
 const mongoose = require('mongoose')
-const path = require('path')
-const CORS = require('cors')
 const db = mongoose.connection
 const Schema = mongoose.Schema
 
@@ -51,7 +49,7 @@ app.get('/', (req, res) => {
 })
 
 app.get('/messages', (req, res) => {
-    Projects.find({}, function (err, projects) {
+    Projects.find({}, 'projects.channel.messages.user projects.channel.messages.message', function (err, projects) {
         res.send(projects)
         
             
@@ -61,7 +59,18 @@ app.get('/messages', (req, res) => {
 })
 
 app.get('/projects', (req, res) => {
+    Projects.find({}, function (err, projects) {
+        res.send(projects)
+    })
+})
 
+app.post('/projects', (req, res) => {
+    const createProject = new Projects(req.body)
+    createProject.save((err, newProject) => {
+        if(err) return next(err);
+        res.status(201);
+        res.json(newProject)
+    })
 })
 
 app.listen(PORT, () => console.log(`Listening on ${ PORT }`))
