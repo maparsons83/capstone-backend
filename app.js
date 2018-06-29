@@ -85,14 +85,14 @@ app.get('/project/:projectName/messages', (req, res) => {
 })
 
 app.get('/projects', (req, res) => {
-    Projects.find({}, function (err, projects) {
-        res.send(projects[0])
+    Users.find({}, function (err, projects) {
+        res.send(projects)
     })
 })
 
 app.post('/projects', (req, res) => {
     const project = req.body
-    Projects.findOneAndUpdate({}, {
+    Users.findOneAndUpdate({}, {
         $push: {
             projects: project
         }
