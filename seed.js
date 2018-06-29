@@ -58,49 +58,33 @@ const Messages = mongoose.model('Messages', messageSchema)
 const Projects = mongoose.model('Projects', projectSchema)
 const Users = mongoose.model('Users', userSchema)
 
-app.get('/', (req, res) => {
-    res.send("It Works");
-})
-
-app.get('/user/:id', (req, res) => {
-    Users.findOne({ "_id": req.params.id }, (error, user) => {
-        console.log(user.projects)
-        res.send(user)
-    })
-})
-
-app.get('/user/:id/project/:projectID/messages', (req, res) => {
-    Users.findById(req.params.id, (error, user) => {
-        const project = user.projects.id(req.params.projectID)
-        console.log(project)
-        res.send(project.channel.messages)
-    })
-})
-
-app.get('/project/:projectName/messages', (req, res) => {
-    Users.findOne({ "projects.projectName": req.params.projectName }, "projects", (error, userWithProjects) => {
-        const project = userWithProjects.projects.find(project => project.projectName === req.params.projectName)
-        res.send(project.channel.messages)
-    })
-})
-
-app.get('/projects', (req, res) => {
-    Projects.find({}, function (err, projects) {
-        res.send(projects[0])
-    })
-})
-
-app.post('/projects', (req, res) => {
-    const project = req.body
-    Projects.findOneAndUpdate({}, {
-        $push: {
-            projects: project
+const startingUser = {
+    "username": "Matty",
+    "email": "String",
+    "projects": [{
+        "projectName": "String",
+        "summary": "String",
+        "targetAudience": "String",
+        "dates": "String",
+        "estimateLink": "String",
+        "location": "String",
+        "leads": "String",
+        "tasks": [{
+            "taskName": "String",
+            "completed": false
+        }],
+        "channel": {
+            "messages": [{
+                "username": "String",
+                "timestamp": 1,
+                "message": "String"
+            }]
         }
-    }, function (err, newProject) {
-        console.log(err)
-    })
-    res.status(201)
-    res.send(req.body)
-})
+    }]
+}
 
-app.listen(PORT, () => console.log(`Listening on ${ PORT }`))
+Users.create(startingUser, function (err, user) {
+    if (err) throw err;
+    // saved!
+    console.log("Saved user:", user)
+})
