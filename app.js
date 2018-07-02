@@ -53,46 +53,56 @@ const userSchema = new Schema({
     projects: [projectSchema]
 })
 
-const Tasks = mongoose.model('Tasks', taskSchema)
-const Messages = mongoose.model('Messages', messageSchema)
-const Projects = mongoose.model('Projects', projectSchema)
-const Users = mongoose.model('Users', userSchema)
+const Task = mongoose.model('Tasks', taskSchema)
+const Message = mongoose.model('Messages', messageSchema)
+const Project = mongoose.model('Projects', projectSchema)
+const User = mongoose.model('Users', userSchema)
 
 app.get('/', (req, res) => {
     res.send("It Works");
 })
 
 app.get('/user/:id', (req, res) => {
-    Users.findOne({ "_id": req.params.id }, (error, user) => {
+    User.findOne({ "_id": req.params.id }, (error, user) => {
         console.log(user.projects)
         res.send(user)
     })
 })
 
 app.get('/user/:id/project/:projectID/messages', (req, res) => {
-    Users.findById(req.params.id, (error, user) => {
+    User.findById(req.params.id, (error, user) => {
         const project = user.projects.id(req.params.projectID)
-        console.log(project)
         res.send(project.channel.messages)
     })
 })
 
 app.get('/project/:projectName/messages', (req, res) => {
-    Users.findOne({ "projects.projectName": req.params.projectName }, "projects", (error, userWithProjects) => {
+    User.findOne({ "projects.projectName": req.params.projectName }, "projects", (error, userWithProjects) => {
         const project = userWithProjects.projects.find(project => project.projectName === req.params.projectName)
         res.send(project.channel.messages)
     })
 })
 
+app.post('/project/:projectName/messages', (req, res) => {
+    const message = new Message(req.body)
+    User.findOne({"projects.projectName": req.params.projectName}, (error, userWithProjects) => {
+        const project = userWithProjects.projects.find(project => project.projectName === req.params.projectName)
+        project.channel.messages.push(message)
+        userWithProjects.save()
+    })
+    console.log('message created')
+    res.send(message)
+})
+
 app.get('/projects', (req, res) => {
-    Users.find({}, function (err, projects) {
-        res.send(projects)
+    User.find({}, function (err, projects) {
+        res.send(projects[0])
     })
 })
 
 app.post('/projects', (req, res) => {
     const project = req.body
-    Users.findOneAndUpdate({}, {
+    User.findOneAndUpdate({}, {
         $push: {
             projects: project
         }
