@@ -64,7 +64,6 @@ app.get('/', (req, res) => {
 
 app.get('/user/:id', (req, res) => {
     User.findOne({ "_id": req.params.id }, (error, user) => {
-        console.log(user.projects)
         res.send(user)
     })
 })
@@ -90,8 +89,28 @@ app.post('/project/:projectName/messages', (req, res) => {
         project.channel.messages.push(message)
         userWithProjects.save()
     })
+    res.status(201)
     console.log('message created')
     res.send(message)
+})
+
+app.get('/project/:projectName/tasks', (req, res) => {
+    User.findOne({"projects.projectName": req.params.projectName}, "projects", (error, userWithProjects) => {
+        const project = userWithProjects.projects.find(project => project.projectName === req.params.projectName)
+        res.send(project.tasks)
+    })
+})
+
+app.post('/project/:projectName/tasks', (req, res) => {
+    const task = new Task(req.body)
+    User.findOne({"projects.projectName": req.params.projectName}, (error, userWithProjects) => {
+        const project = userWithProjects.projects.find(project => project.projectName === req.params.projectName)
+        project.tasks.push(task)
+        userWithProjects.save()
+    })
+    res.status(201)
+    console.log('Task created')
+    res.send(task)
 })
 
 app.get('/projects', (req, res) => {
