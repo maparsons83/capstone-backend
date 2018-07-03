@@ -50,6 +50,7 @@ const projectSchema = new Schema({
 const userSchema = new Schema({
     username: String,
     email: String,
+    password: String,
     projects: [projectSchema]
 })
 
@@ -64,7 +65,9 @@ app.get('/', (req, res) => {
 
 //Query for verifying login info
 app.post('/login', (req, res) => {
-    Users.findOne({"email": req.body.email}, "username", (error, userLogin) => {
+    User.findOne({"email": req.body.email}, (error, userLogin) => {
+        console.log(userLogin.password)
+        console.log(req.body.password)
         if(req.body.password === userLogin.password) {
             res.send({"username": userLogin.username, "success": true})
         } else {
