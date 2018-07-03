@@ -62,26 +62,27 @@ app.get('/', (req, res) => {
     res.send("It Works");
 })
 
-app.get('/user/:id', (req, res) => {
-    User.findOne({ "_id": req.params.id }, (error, user) => {
-        res.send(user)
+//Query for verifying login info
+app.post('/login', (req, res) => {
+    Users.findOne({"email": req.body.email}, "username", (error, userLogin) => {
+        if(req.body.password === userLogin.password) {
+            res.send({"username": userLogin.username, "success": true})
+        } else {
+            res.send({"success": false})
+        }
     })
 })
 
-app.get('/user/:id/project/:projectID/messages', (req, res) => {
-    User.findById(req.params.id, (error, user) => {
-        const project = user.projects.id(req.params.projectID)
-        res.send(project.channel.messages)
-    })
-})
-
+//Query for finding all messages associated with a project
 app.get('/project/:projectName/messages', (req, res) => {
-    User.findOne({ "projects.projectName": req.params.projectName }, "projects", (error, userWithProjects) => {
+    User.findOne({ "projects.projectName": req.params.projectName }, { 'password': 0 }, "projects", (error, userWithProjects) => {
         const project = userWithProjects.projects.find(project => project.projectName === req.params.projectName)
         res.send(project.channel.messages)
     })
 })
 
+
+//Query for adding a message to a project
 app.post('/project/:projectName/messages', (req, res) => {
     const message = new Message(req.body)
     User.findOne({"projects.projectName": req.params.projectName}, (error, userWithProjects) => {
@@ -94,13 +95,15 @@ app.post('/project/:projectName/messages', (req, res) => {
     res.send(message)
 })
 
+//Query for finding all tasks associated with a project
 app.get('/project/:projectName/tasks', (req, res) => {
-    User.findOne({"projects.projectName": req.params.projectName}, "projects", (error, userWithProjects) => {
+    User.findOne({"projects.projectName": req.params.projectName}, { 'password': 0 }, "projects", (error, userWithProjects) => {
         const project = userWithProjects.projects.find(project => project.projectName === req.params.projectName)
         res.send(project.tasks)
     })
 })
 
+//Query for adding a task to project
 app.post('/project/:projectName/tasks', (req, res) => {
     const task = new Task(req.body)
     User.findOne({"projects.projectName": req.params.projectName}, (error, userWithProjects) => {
@@ -113,12 +116,14 @@ app.post('/project/:projectName/tasks', (req, res) => {
     res.send(task)
 })
 
+//Query for pulling a list of all projects
 app.get('/projects', (req, res) => {
-    User.find({}, function (err, projects) {
+    User.find({}, { 'password': 0 }, function (err, projects) {
         res.send(projects[0])
     })
 })
 
+//Query for adding a project to a user
 app.post('/projects', (req, res) => {
     const project = req.body
     User.findOneAndUpdate({}, {
