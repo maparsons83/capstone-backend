@@ -63,12 +63,13 @@ app.get('/', (req, res) => {
     res.send("It Works");
 })
 
+//Adding a new user
 app.post('/signup', (req, res) => {
     const newUser = new User(req.body)
     newUser.save(function (err) {
         if(err) throw err
     })
-    res.end()
+    res.send({"success": true})
 })
 
 //Query for verifying login info
@@ -103,7 +104,7 @@ app.post('/project/:projectName/messages', (req, res) => {
         userWithProjects.save()
     })
     res.status(201)
-    console.log('message created')
+    console.log('Message created')
     res.send(message)
 })
 
