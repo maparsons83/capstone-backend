@@ -66,14 +66,15 @@ app.get('/', (req, res) => {
 //Query for verifying login info
 app.post('/login', (req, res) => {
     User.findOne({"email": req.body.email}, (error, userLogin) => {
-        console.log(userLogin.password)
-        console.log(req.body.password)
+        if(!userLogin) {
+            res.send({"success": false})
+        } else { 
         if(req.body.password === userLogin.password) {
             res.send({"username": userLogin.username, "success": true})
         } else {
             res.send({"success": false})
         }
-    })
+    }}) 
 })
 
 //Query for finding all messages associated with a project
