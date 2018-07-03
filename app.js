@@ -63,6 +63,14 @@ app.get('/', (req, res) => {
     res.send("It Works");
 })
 
+app.post('/signup', (req, res) => {
+    const newUser = new User(req.body)
+    newUser.save(function (err) {
+        if(err) throw err
+    })
+    res.end()
+})
+
 //Query for verifying login info
 app.post('/login', (req, res) => {
     User.findOne({"email": req.body.email}, (error, userLogin) => {
@@ -121,16 +129,16 @@ app.post('/project/:projectName/tasks', (req, res) => {
 })
 
 //Query for pulling a list of all projects
-app.get('/projects', (req, res) => {
-    User.find({}, { 'password': 0 }, function (err, projects) {
+app.get('/projects/:userId', (req, res) => {
+    User.find({"username": req.params.userId }, { 'password': 0 }, function (err, projects) {
         res.send(projects[0])
     })
 })
 
 //Query for adding a project to a user
-app.post('/projects', (req, res) => {
+app.post('/projects/:userId', (req, res) => {
     const project = req.body
-    User.findOneAndUpdate({}, {
+    User.findOneAndUpdate({"username": req.params.userId}, {
         $push: {
             projects: project
         }
