@@ -131,8 +131,19 @@ app.post('/project/:projectName/tasks', (req, res) => {
 
 //Query for pulling a list of all projects
 app.get('/projects/:userId', (req, res) => {
-    User.find({"username": req.params.userId }, { 'password': 0 }, function (err, projects) {
-        res.send(projects[0])
+    User.find({"username": req.params.userId }, { 'password': 0 }, function (err, user) {
+        console.log(user)
+    })
+    .then(originalUser => {
+        User.find({"projects.targetAudience": req.params.userId}, (err, usersWithProjects) => {
+            let combinedProjects = [];
+            usersWithProjects.forEach(user => {
+                let userSharedProjects = user.projects.filter(project => project.targetAudience.includes(req.params.userId));
+                console.log(userSharedProjects)
+                originalUser[0].projects.push(...userSharedProjects);
+            })
+            res.send(originalUser[0])
+        })
     })
 })
 
